@@ -207,6 +207,19 @@ export default function Navbar({ links }: HeaderResponsiveProps) {
         {"Pixels"}
       </Link>
       <Link
+        key={"Generate Pixel"}
+        to="/generate"
+        className={cx(classes.link, {
+          [classes.linkActive]: active === "/generate",
+        })}
+        onClick={(event) => {
+          setActive("/generate");
+          close();
+        }}
+      >
+        {"Generate Pixel"}
+      </Link>
+      <Link
         key={"Logout"}
         to="/logout"
         className={cx(classes.link, {

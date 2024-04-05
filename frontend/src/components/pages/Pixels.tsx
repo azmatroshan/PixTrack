@@ -46,7 +46,7 @@ export default function Pixels() {
   };
 
   const handleDelete = (pixelId: string) => {
-    deletePixel(pixelId).then(
+    deletePixel({ pixelId }).then(
       (response: any) => {
         setStateUpdate(!stateUpdate);
       },
