@@ -1,3 +1,3 @@
 module.exports = {
-  secret: "azmatroshan-secret-key"
+  secret: process.env.SECRET
 };
