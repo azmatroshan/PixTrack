@@ -8,6 +8,7 @@ import {
   Pagination,
   TextInput,
   Container,
+  Title,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import moment from "moment";
@@ -139,6 +140,15 @@ export default function Pixels() {
         <>
           <Container>
             <ScrollArea>
+              <Title
+                mb="50px"
+                align="center"
+                sx={(theme) => ({
+                  fontWeight: 900,
+                })}
+              >
+                Pixels
+              </Title>
               <TextInput
                 placeholder={"Search by any field"}
                 mb="md"
@@ -159,6 +169,7 @@ export default function Pixels() {
             </ScrollArea>
             <Center>
               <Pagination
+                mb="100px"
                 value={currentPage}
                 onChange={handlePageChange}
                 pt={40}

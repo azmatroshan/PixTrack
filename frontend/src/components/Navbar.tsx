@@ -14,9 +14,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import { IconChevronDown } from "@tabler/icons-react";
 import { useSelector } from "react-redux";
+import LogoStatic from "./fragments/Logo";
 
 const HEADER_HEIGHT = rem(60);
-const PUSH_DOWN = rem(120);
+const PUSH_DOWN = rem(100);
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -274,7 +275,9 @@ export default function Navbar({ links }: HeaderResponsiveProps) {
               setActive("/");
               close();
             }}
-          ></Link>
+          >
+            <LogoStatic />
+          </Link>
           <Group spacing={5} className={classes.links}>
             {items}
             {otherLinks}

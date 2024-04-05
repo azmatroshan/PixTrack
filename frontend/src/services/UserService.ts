@@ -25,9 +25,13 @@ const deletePixel = ({ pixelId }: any) => {
 };
 
 const generatePixel = (subject: any) => {
-  return axios.post(API_URL + "generate", subject, {
-    headers: authHeader(),
-  });
+  return axios.post(
+    API_URL + "generate",
+    { subject: subject },
+    {
+      headers: authHeader(),
+    }
+  );
 };
 
 export { deletePixel, getAllPixels, generatePixel };
