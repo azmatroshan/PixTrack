@@ -7,14 +7,14 @@ exports.generate = async (req, res) => {
     try {
         const userId = req.userId;
         if (!userId) return res.status(403).send({ auth: false, message: 'No token provided' });
-
-        const subject = req.subject;
+        console.log(req.body.subject)
+        const subject = req.body.subject;
 
         const uid = new ShortUniqueId({ length: 10 });
         const uniqueId = uid.rnd();
 
         // Save the unique ID to the database
-        const stat = new Stat({ _id: uniqueId });
+        const stat = new Stat({ _id: uniqueId, userId: userId, subject: subject });
         const savedStat = await stat.save();
 
         // Find the user and update their pixels array with the new pixel

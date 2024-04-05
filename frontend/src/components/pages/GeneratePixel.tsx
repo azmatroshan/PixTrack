@@ -27,7 +27,7 @@ export default function GeneratePixel() {
 
   const handleRegister = (formValue: any) => {
     setSuccessful(false);
-    generatePixel(formValue).then(
+    generatePixel(formValue.subject).then(
       (response: any) => {
         setSuccessful(true);
       },

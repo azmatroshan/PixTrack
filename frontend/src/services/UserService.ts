@@ -12,7 +12,7 @@ import authHeader from "./auth-header";
 // };
 
 const getAllPixels = (params: any) => {
-  return axios.get(API_URL + "getAllPixels", {
+  return axios.get(API_URL + "allPixels", {
     headers: authHeader(),
     params: params,
   });
@@ -24,7 +24,7 @@ const deletePixel = ({ pixelId }: any) => {
   });
 };
 
-const generatePixel = ({ subject }: any) => {
+const generatePixel = (subject: any) => {
   return axios.post(API_URL + "generate", subject, {
     headers: authHeader(),
   });

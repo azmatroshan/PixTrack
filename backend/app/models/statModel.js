@@ -7,6 +7,8 @@ const Stat = mongoose.model(
         type: String,
         required: true
     },
+    subject: String,
+    userId: String,
     createdAt: {
         type: Date,
         default: Date.now()
