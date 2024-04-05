@@ -38,6 +38,7 @@ app.get("/", (req, res) => {
 
 // routes
 require("./app/routes/authRoute")(app);
+require("./app/routes/trackRoute")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT;
