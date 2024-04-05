@@ -14,10 +14,12 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import PixelDetailsModal from "../fragments/PixelDetailsModal";
 import { generatePixel } from "../../services/UserService";
+import { API_URL } from "../../common/Constants";
 
 export default function GeneratePixel() {
   const [successful, setSuccessful] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
+  const [pixelId, setPixelId] = useState<string>();
 
   const form = useForm({
     initialValues: {
@@ -30,6 +32,7 @@ export default function GeneratePixel() {
     generatePixel(formValue.subject).then(
       (response: any) => {
         setSuccessful(true);
+        setPixelId(response.data.pixelId);
       },
       (error: any) => {}
     );
@@ -49,8 +52,8 @@ export default function GeneratePixel() {
           <Modal opened={opened} onClose={close} title="Pixel Details" centered>
             <PixelDetailsModal
               data={{
-                imageUrl: "",
-                html: "",
+                imageUrl: `${API_URL}track/${pixelId}`,
+                html: `<img src="${API_URL}track/${pixelId}" alt="pixel" />`,
               }}
             />
           </Modal>
