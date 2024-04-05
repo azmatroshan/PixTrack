@@ -4,6 +4,7 @@ import { NavBarLinks } from "./components/data/NavBarLinks";
 import { Login } from "./components/pages/Login";
 import { Register } from "./components/pages/Register";
 import { useSelector } from "react-redux";
+import Pixels from "./components/pages/Pixels";
 
 export default function App() {
 
@@ -16,6 +17,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/pixels" element={<Pixels />} />
         </Routes>
       </div>
     </div>

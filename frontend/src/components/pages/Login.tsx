@@ -53,7 +53,7 @@ export function Login() {
   };
 
   if (isLoggedIn) {
-    return <Navigate to="/dashboard/home" />;
+    return <Navigate to="/pixels" />;
   }
 
   return (

@@ -1,7 +1,6 @@
 import {
   TextInput,
   PasswordInput,
-  Checkbox,
   Anchor,
   Paper,
   Title,
@@ -9,85 +8,148 @@ import {
   Container,
   Group,
   Button,
+  Box,
+  LoadingOverlay,
 } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
-import AuthService from "../../services/auth.service";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { register } from "../../slices/auth";
+import { clearMessage } from "../../slices/message";
 import { useForm } from "@mantine/form";
+import { Link, Navigate } from "react-router-dom";
 
 export function Register() {
-  const navigate = useNavigate();
-  const handleRegister = (formValue: {
-    username: string;
-    password: string;
-    email: string;
-  }) => {
-    const { username, password, email } = formValue;
+  const [successful, setSuccessful] = useState(false);
+  const { isLoggedIn } = useSelector((state: any) => {
+    return state.auth;
+  });
+  const [loadingOverlayIsVisible, setLoadingOverlayIsVisible] = useState(false);
+  const dispatch = useDispatch();
 
-    AuthService.register(username, email, password).then(
-      () => {
-        navigate("/pixels");
-        window.location.reload();
-      },
-      (error) => {}
-    );
-  };
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
 
   const form = useForm({
     initialValues: {
       username: "",
-      password: "",
       email: "",
+      password: "",
+    },
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      username: (value) =>
+        /^[a-zA-Z0-9]+$/.test(value)
+          ? null
+          : "The username must be unique and should not contain spaces or symbols!",
+      // eslint-disable-next-line no-useless-escape
+      // password: (value) =>
+      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/.test(
+      //     value
+      //   )
+      //     ? null
+      //     : "The password must contain atleast one uppercase, lowercase, symbol, and a number, and length must be more than 8 characters",
     },
   });
 
+  if (successful) {
+    return <Navigate to="/login" />;
+  }
+
+  if (isLoggedIn) {
+    return <Navigate to="/pixels" />;
+  }
+  const handleRegister = async (formValue: any) => {
+    setLoadingOverlayIsVisible(true);
+    const { username, email, password } = formValue;
+
+    setSuccessful(false);
+
+    // @ts-ignore
+    await dispatch(register({ username, email, password }))
+      .unwrap()
+      .then(() => {
+        setSuccessful(true);
+        setLoadingOverlayIsVisible(false);
+      })
+      .catch(() => {
+        setLoadingOverlayIsVisible(false);
+        setSuccessful(false);
+      });
+  };
+
   return (
     <Container size={420} my={40}>
-      <Title
-        align="center"
-        sx={(theme) => ({
-          fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-          fontWeight: 900,
-        })}
-      >
-        Welcome!
-      </Title>
-      <Text color="dimmed" size="sm" align="center" mt={5}>
-        Already have an account?{" "}
-        <Anchor size="sm" component="button">
-          Login
-        </Anchor>
-      </Text>
+      {!successful && (
+        <>
+          <Title
+            align="center"
+            sx={(theme) => ({
+              fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+              fontWeight: 900,
+            })}
+          >
+            Welcome to Pixels!
+          </Title>
+          <Text color="dimmed" size="sm" align="center" mt={5}>
+            Already have an account?{" "}
+            <Anchor size="sm" component={Link} to="/login">
+              Login
+            </Anchor>
+          </Text>
+        </>
+      )}
 
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <form onSubmit={form.onSubmit(handleRegister)}>
-          <TextInput
-            label="Username"
-            placeholder="johndoe"
-            required
-            {...form.getInputProps("username")}
-          />
-          <TextInput
-            mt="md"
-            label="Email"
-            placeholder="you@mantine.dev"
-            required
-            {...form.getInputProps("email")}
-          />
-          <PasswordInput
-            label="Password"
-            placeholder="Your password"
-            required
-            mt="md"
-            {...form.getInputProps("password")}
-          />
-          <Group position="apart" mt="lg">
-            <Checkbox label="Remember me" />
-          </Group>
-          <Button fullWidth mt="xl">
-            Sign Up
-          </Button>
-        </form>
-      </Paper>
+      <Box maw={400} pos="relative">
+        <LoadingOverlay
+          loaderProps={{ variant: "bars" }}
+          visible={loadingOverlayIsVisible}
+          overlayBlur={1}
+        />
+        <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+          {!successful && (
+            <form onSubmit={form.onSubmit(handleRegister)}>
+              <TextInput
+                label="Username"
+                description="The username must be unique and should not contain spaces or symbols!"
+                mt="md"
+                placeholder="johndoe"
+                required
+                {...form.getInputProps("username")}
+              />
+              <TextInput
+                label="Email"
+                mt="md"
+                placeholder="you@mantine.dev"
+                required
+                {...form.getInputProps("email")}
+              />
+              <PasswordInput
+                label="Password"
+                description="The password must contain atleast one uppercase, lowercase, symbol, and a number, and length must be more than 8 characters"
+                placeholder="Your password"
+                required
+                mt="md"
+                {...form.getInputProps("password")}
+              />
+              <Group position="apart" mt="lg">
+                <Anchor component={Link} to="/forgot-password" size="sm">
+                  Forgot password?
+                </Anchor>
+              </Group>
+              <Button fullWidth mt="xl" type="submit">
+                Sign up
+              </Button>
+            </form>
+          )}
+          {successful && (
+            <>
+              <Text>Thanks for registering!</Text>
+            </>
+          )}
+        </Paper>
+      </Box>
     </Container>
   );
 }

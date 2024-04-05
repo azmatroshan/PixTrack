@@ -8,16 +8,21 @@ import {
   Paper,
   Transition,
   rem,
+  Menu,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "react-router-dom";
+import { IconChevronDown } from "@tabler/icons-react";
+import { useSelector } from "react-redux";
 
 const HEADER_HEIGHT = rem(60);
+const PUSH_DOWN = rem(120);
 
 const useStyles = createStyles((theme) => ({
   root: {
-    position: "relative",
-    zIndex: 10,
+    position: "fixed",
+    zIndex: 1,
+    top: 0,
   },
 
   dropdown: {
@@ -91,64 +96,198 @@ const useStyles = createStyles((theme) => ({
         .color,
     },
   },
+  linkLabel: {
+    marginRight: rem(5),
+  },
+  linkDrop: {
+    lineHeight: 1,
+
+    [theme.fn.smallerThan("sm")]: {
+      borderRadius: 0,
+      //padding: theme.spacing.md,
+    },
+  },
 }));
 
 interface HeaderResponsiveProps {
-  links: { link: string; label: string }[];
+  links: {
+    link: string;
+    label: string;
+    links?: { link: string; label: string }[];
+  }[];
 }
 
-export default function NavBar({ links }: HeaderResponsiveProps) {
+export default function Navbar({ links }: HeaderResponsiveProps) {
   const [opened, { toggle, close }] = useDisclosure(false);
   const [active, setActive] = useState(links[0].link);
   const { classes, cx } = useStyles();
+
+  const handleLogout = (event: any) => {
+    localStorage.removeItem("user");
+    window.location.reload();
+  };
+
+  const { user: currentUser } = useSelector((state: any) => state.auth);
 
   useEffect(() => {
     setActive(window.location.pathname);
   }, []);
 
-  const items = links.map((link) => (
-    <Link
-      key={link.label}
-      to={link.link}
-      className={cx(classes.link, {
-        [classes.linkActive]: active === link.link,
-      })}
-      onClick={(event) => {
-        setActive(link.link);
-        close();
-      }}
-    >
-      {link.label}
-    </Link>
-  ));
-  return (
-    <Header height={HEADER_HEIGHT} mb={40} className={classes.root}>
-      <Container className={classes.header}>
-        <Link
-          to="/"
-          onClick={() => {
-            setActive("/");
-            close();
-          }}
-        ></Link>
-        <Group spacing={5} className={classes.links}>
-          {items}
-        </Group>
+  const items = links.map((link) => {
+    const menuItems = link.links?.map((item) => (
+      <Menu.Item
+        className={classes.linkDrop}
+        component={Link}
+        to={item.link}
+        onClick={(event) => {
+          setActive(item.link);
+          close();
+        }}
+        key={item.link}
+      >
+        {item.label}
+      </Menu.Item>
+    ));
 
-        <Burger
-          opened={opened}
-          onClick={toggle}
-          className={classes.burger}
-          size="sm"
-        />
-        <Transition transition="pop-top-right" duration={200} mounted={opened}>
-          {(styles) => (
-            <Paper className={classes.dropdown} withBorder style={styles}>
-              {items}
-            </Paper>
-          )}
-        </Transition>
-      </Container>
-    </Header>
+    if (menuItems) {
+      return (
+        <Menu
+          key={link.label}
+          trigger="hover"
+          transitionProps={{ exitDuration: 0 }}
+          withinPortal
+        >
+          <Menu.Target>
+            <Link
+              to={link.link}
+              className={classes.link}
+              onClick={(event) => {
+                setActive(link.link);
+              }}
+            >
+              <span className={classes.linkLabel}>{link.label}</span>
+              <IconChevronDown size="0.9rem" stroke={1.5} />
+            </Link>
+          </Menu.Target>
+          <Menu.Dropdown>{menuItems}</Menu.Dropdown>
+        </Menu>
+      );
+    }
+
+    return (
+      <Link
+        key={link.label}
+        to={link.link}
+        className={cx(classes.link, {
+          [classes.linkActive]: active === link.link,
+        })}
+        onClick={(event) => {
+          setActive(link.link);
+          close();
+        }}
+      >
+        {link.label}
+      </Link>
+    );
+  });
+
+  const otherLinks = currentUser ? (
+    <>
+      <Link
+        key={"Pixels"}
+        to="/pixels"
+        className={cx(classes.link, {
+          [classes.linkActive]: active === "/pixels",
+        })}
+        onClick={(event) => {
+          setActive("/pixels");
+          close();
+        }}
+      >
+        {"Pixels"}
+      </Link>
+      <Link
+        key={"Logout"}
+        to="/logout"
+        className={cx(classes.link, {
+          [classes.linkActive]: active === "/logout",
+        })}
+        onClick={(event) => {
+          setActive("/logout");
+          handleLogout(event);
+          close();
+        }}
+      >
+        {"Logout"}
+      </Link>
+    </>
+  ) : (
+    <>
+      <Link
+        key={"login"}
+        to="login"
+        className={cx(classes.link, {
+          [classes.linkActive]: active === "/login",
+        })}
+        onClick={(event) => {
+          setActive("/login");
+          close();
+        }}
+      >
+        {"Login"}
+      </Link>
+      <Link
+        key={"signup"}
+        to="register"
+        className={cx(classes.link, {
+          [classes.linkActive]: active === "/register",
+        })}
+        onClick={(event) => {
+          setActive("/register");
+          close();
+        }}
+      >
+        {"Signup"}
+      </Link>
+    </>
+  );
+  return (
+    <>
+      <Header height={HEADER_HEIGHT} mb={40} className={classes.root}>
+        <Container className={classes.header}>
+          <Link
+            to="/"
+            onClick={() => {
+              setActive("/");
+              close();
+            }}
+          ></Link>
+          <Group spacing={5} className={classes.links}>
+            {items}
+            {otherLinks}
+          </Group>
+
+          <Burger
+            opened={opened}
+            onClick={toggle}
+            className={classes.burger}
+            size="sm"
+          />
+          <Transition
+            transition="pop-top-right"
+            duration={200}
+            mounted={opened}
+          >
+            {(styles) => (
+              <Paper className={classes.dropdown} withBorder style={styles}>
+                {items}
+                {otherLinks}
+              </Paper>
+            )}
+          </Transition>
+        </Container>
+      </Header>
+      <div style={{ marginTop: PUSH_DOWN }}></div>
+    </>
   );
 }
