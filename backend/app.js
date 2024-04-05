@@ -39,6 +39,8 @@ app.get("/", (req, res) => {
 // routes
 require("./app/routes/authRoute")(app);
 require("./app/routes/trackRoute")(app);
+require("./app/routes/generateRoute")(app);
+require("./app/routes/allPixelsRoute")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT;

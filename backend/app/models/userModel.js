@@ -15,7 +15,7 @@ const User = mongoose.model(
       type: String,
       required: true
     },
-    emails: [
+    pixels: [
       {
         subject: String,
         statId: String,

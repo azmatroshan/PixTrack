@@ -1,4 +1,4 @@
-const controller = require("../controllers/trackController");
+const controller = require("../controllers/generateController");
 const { authJwt } = require("../middlewares");
 
 module.exports = function(app) {
@@ -10,5 +10,11 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/track/:trackId",[authJwt.verifyToken], controller.track);
+  app.post(
+    "/api/generate",
+    [
+      authJwt.verifyToken
+    ],
+    controller.generate
+  );
 };

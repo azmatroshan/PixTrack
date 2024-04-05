@@ -1,4 +1,4 @@
-const controller = require("../controllers/trackController");
+const controller = require("../controllers/allPixelsController");
 const { authJwt } = require("../middlewares");
 
 module.exports = function(app) {
@@ -10,5 +10,11 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/track/:trackId",[authJwt.verifyToken], controller.track);
+  app.get(
+    "/api/allPixels",
+    [
+      authJwt.verifyToken
+    ],
+    controller.getAllPixels
+  );
 };
