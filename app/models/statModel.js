@@ -15,7 +15,12 @@ const Stat = mongoose.model(
     },
     visits: [
         {
-            timestamp: String
+          timestamp: {
+            type: Date,
+            default: Date.now()
+          },
+          client_ip: String,
+          path: String
         }
     ]
   })
