@@ -11,4 +11,6 @@ module.exports = function (app) {
   });
 
   app.get("/api/track/:trackId", controller.track);
+  
+  app.get("/api/deletePixel", [authJwt.verifyToken], controller.deleteStatByTrackId);
 };

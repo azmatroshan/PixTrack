@@ -31,3 +31,24 @@ exports.track = async (req, res) => {
         res.status(500).send({ message: "An error occurred while tracking" });
     }
 };
+
+exports.deleteStatByTrackId = async (req, res) => {
+    try {
+        // Parse the trackId from the request query
+        const trackId = req.query.trackId;
+
+        // Find and delete the stat document based on the provided trackId
+        const deletedStat = await Stat.findOneAndDelete({ _id: trackId });
+
+        // Check if the stat was found and deleted
+        if (!deletedStat) {
+            return res.status(404).json({ message: "Stat not found" });
+        }
+
+        // Return a success message
+        return res.status(200).json({ message: "Stat deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting pixel stat:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
