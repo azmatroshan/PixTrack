@@ -7,6 +7,7 @@ exports.track = async (req, res) => {
         const trackId = req.params.trackId;
         const client_ip = req.ip;
         const path = req.path;
+        const user_agent = req.headers["user-agent"];
 
         // Find the corresponding Stat document by its ID
         const stat = await Stat.findById(trackId);
@@ -16,7 +17,7 @@ exports.track = async (req, res) => {
         }
 
         // Add visit information to the visits array
-        stat.visits.push({ timestamp: Date.now(), client_ip, path });
+        stat.visits.push({ timestamp: Date.now(), client_ip, path, user_agent });
 
         // Save the updated Stat document
         await stat.save();

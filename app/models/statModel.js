@@ -20,7 +20,8 @@ const Stat = mongoose.model(
             default: Date.now()
           },
           client_ip: String,
-          path: String
+          path: String,
+          user_agent: String
         }
     ]
   })
