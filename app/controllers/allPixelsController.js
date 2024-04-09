@@ -9,8 +9,11 @@ exports.getAllPixels = async (req, res) => {
         if (!userId) return res.status(403).send({ auth: false, message: 'No token provided' });
 
         let searchQuery = {
-            $or: [
-                { subject: { $regex: new RegExp(search, "i") } },
+            $and: [
+                { userId: userId },
+                { $or: [
+                    { subject: { $regex: new RegExp(search, "i") } },
+                ]},
             ],
         };
 
